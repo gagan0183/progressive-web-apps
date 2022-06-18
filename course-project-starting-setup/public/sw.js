@@ -1,7 +1,9 @@
+var CACHE_STATIC = 'static-v1';
+
 self.addEventListener("install", (event) => {
   console.log("[Service worker] installing service worker...", event);
   event.waitUntil(
-    caches.open("static-v2").then(function (cache) {
+    caches.open(CACHE_STATIC).then(function (cache) {
       console.log("[Service worker] Precaching app shell");
       cache.addAll([
         "/",
@@ -23,9 +25,9 @@ self.addEventListener("activate", (event) => {
   console.log("[Service worker] activating service worker...", event);
   event.waitUntil(caches.keys().then(function(keyList) {
       return Promise.all(keyList.map(function(key) {
-        if (key !== 'static-v2' && key !== 'dynamic') {
-            console.log('[Service Worker] removing old caches', key);
-            return caches.delete(key);
+        if (key !== CACHE_STATIC && key !== "dynamic") {
+          console.log("[Service Worker] removing old caches", key);
+          return caches.delete(key);
         }
       }));
   }))
