@@ -56,10 +56,10 @@ function createCard() {
   cardSupportingText.className = "mdl-card__supporting-text";
   cardSupportingText.textContent = "In San Francisco";
   cardSupportingText.style.textAlign = "center";
-  var cardButtons = document.createElement("button");
-  cardButtons.textContent = "Save";
-  cardSupportingText.appendChild(cardButtons);
-  cardButtons.addEventListener("click", onButtonClicked);
+  // var cardButtons = document.createElement("button");
+  // cardButtons.textContent = "Save";
+  // cardSupportingText.appendChild(cardButtons);
+  // cardButtons.addEventListener("click", onButtonClicked);
   cardWrapper.appendChild(cardSupportingText);
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
