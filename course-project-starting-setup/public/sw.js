@@ -1,4 +1,4 @@
-var CACHE_STATIC = 'static-v1';
+var CACHE_STATIC = 'static-v2';
 
 self.addEventListener("install", (event) => {
   console.log("[Service worker] installing service worker...", event);
@@ -44,7 +44,7 @@ self.addEventListener("fetch", (event) => {
         } else {
           return fetch(event.request).then(function(res) {
               return caches.open('dynamic').then(function(cache) {
-                cache.put(event.request.url, res.clone());
+                // cache.put(event.request.url, res.clone());
                 return res;
               }).catch(function(err) {});
           });

@@ -25,6 +25,10 @@ function closeCreatePostModal() {
   createPostArea.style.display = 'none';
 }
 
+function onButtonClicked(event) {
+  console.log("clicked");
+}
+
 shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
@@ -46,6 +50,10 @@ function createCard() {
   cardSupportingText.className = "mdl-card__supporting-text";
   cardSupportingText.textContent = "In San Francisco";
   cardSupportingText.style.textAlign = "center";
+  var cardButtons = document.createElement("button");
+  cardButtons.textContent = "Save";
+  cardSupportingText.appendChild(cardButtons);
+  cardButtons.addEventListener("click", onButtonClicked);
   cardWrapper.appendChild(cardSupportingText);
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
