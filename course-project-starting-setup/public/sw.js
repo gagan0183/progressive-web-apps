@@ -1,4 +1,4 @@
-var CACHE_STATIC = 'static-v2';
+var CACHE_STATIC = 'static-v1';
 
 self.addEventListener("install", (event) => {
   console.log("[Service worker] installing service worker...", event);
@@ -10,6 +10,7 @@ self.addEventListener("install", (event) => {
         "/index.html",
         "/src/js/app.js",
         "/src/js/material.min.js",
+        "/src/js/feed.js",
         "/src/css/app.css",
         "/src/css/feed.css",
         "/src/images/main-image.jpg",
