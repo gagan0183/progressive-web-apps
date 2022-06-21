@@ -1,4 +1,4 @@
-var CACHE_STATIC = 'static-v1';
+var CACHE_STATIC = 'static-v3';
 
 self.addEventListener("install", (event) => {
   console.log("[Service worker] installing service worker...", event);
@@ -8,6 +8,7 @@ self.addEventListener("install", (event) => {
       cache.addAll([
         "/",
         "/index.html",
+        "/offline.html",
         "/src/js/app.js",
         "/src/js/material.min.js",
         "/src/js/feed.js",
@@ -43,12 +44,19 @@ self.addEventListener("fetch", (event) => {
         if (response) {
           return response;
         } else {
-          return fetch(event.request).then(function(res) {
-              return caches.open('dynamic').then(function(cache) {
+          return fetch(event.request)
+            .then(function (res) {
+              return caches.open("dynamic").then(function (cache) {
                 cache.put(event.request.url, res.clone());
                 return res;
-              }).catch(function(err) {});
-          });
+              });
+            })
+            .catch(function (err) {
+              console.log("error", err);
+              return caches.open(CACHE_STATIC).then(function (cache) {
+                return cache.match("/offline.html");
+              });
+            });
         }
       })
       .catch()
