@@ -1,4 +1,4 @@
-var CACHE_STATIC = 'static-v3';
+var CACHE_STATIC = 'static-v1';
 
 self.addEventListener("install", (event) => {
   console.log("[Service worker] installing service worker...", event);
@@ -36,41 +36,41 @@ self.addEventListener("activate", (event) => {
   return self.clients.claim();
 });
 
-// self.addEventListener("fetch", (event) => {
-//   event.respondWith(
-//     caches
-//       .match(event.request)
-//       .then(function (response) {
-//         if (response) {
-//           return response;
-//         } else {
-//           return fetch(event.request)
-//             .then(function (res) {
-//               return caches.open("dynamic").then(function (cache) {
-//                 cache.put(event.request.url, res.clone());
-//                 return res;
-//               });
-//             })
-//             .catch(function (err) {
-//               console.log("error", err);
-//               return caches.open(CACHE_STATIC).then(function (cache) {
-//                 return cache.match("/offline.html");
-//               });
-//             });
-//         }
-//       })
-//       .catch()
-//   );
-// });
-
-// network with caches strategy
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    fetch(event.request).catch(function (err) {
-      return caches.match(event.request);
-    })
+    caches
+      .match(event.request)
+      .then(function (response) {
+        if (response) {
+          return response;
+        } else {
+          return fetch(event.request)
+            .then(function (res) {
+              return caches.open("dynamic").then(function (cache) {
+                cache.put(event.request.url, res.clone());
+                return res;
+              });
+            })
+            .catch(function (err) {
+              console.log("error", err);
+              return caches.open(CACHE_STATIC).then(function (cache) {
+                return cache.match("/offline.html");
+              });
+            });
+        }
+      })
+      .catch()
   );
 });
+
+// network with caches strategy
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(
+//     fetch(event.request).catch(function (err) {
+//       return caches.match(event.request);
+//     })
+//   );
+// });
 
 // cache only strategy
 // self.addEventListener("fetch", (event) => {

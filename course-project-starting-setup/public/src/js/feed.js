@@ -1,17 +1,19 @@
-var shareImageButton = document.querySelector('#share-image-button');
-var createPostArea = document.querySelector('#create-post');
-var closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
+var shareImageButton = document.querySelector("#share-image-button");
+var createPostArea = document.querySelector("#create-post");
+var closeCreatePostModalButton = document.querySelector(
+  "#close-create-post-modal-btn"
+);
 var sharedMomentsArea = document.querySelector("#shared-moments");
 
 function openCreatePostModal() {
-  createPostArea.style.display = 'block';
+  createPostArea.style.display = "block";
   if (deferredEvent) {
     deferredEvent.prompt();
   }
 
   deferredEvent.userChoice.then((choiceResult) => {
     console.log(choiceResult.outcome);
-    if( choiceResult.outcome === "dismissed") {
+    if (choiceResult.outcome === "dismissed") {
       console.log("User cancelled installation");
     } else {
       console.log("User added to homescreen");
@@ -22,22 +24,28 @@ function openCreatePostModal() {
 }
 
 function closeCreatePostModal() {
-  createPostArea.style.display = 'none';
+  createPostArea.style.display = "none";
 }
 
 function onButtonClicked(event) {
   console.log("clicked");
   if ("caches" in window) {
-    caches.open("user-requested").then(function(cache) {
+    caches.open("user-requested").then(function (cache) {
       cache.add("https://httpbin.org/get");
       cache.add("/src/images/sf-boat.jpg");
     });
   }
 }
 
-shareImageButton.addEventListener('click', openCreatePostModal);
+shareImageButton.addEventListener("click", openCreatePostModal);
 
-closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
+closeCreatePostModalButton.addEventListener("click", closeCreatePostModal);
+
+function clearCards() {
+  while(sharedMomentsArea.hasChildNodes()) {
+    sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
+  }
+}
 
 function createCard() {
   var cardWrapper = document.createElement("div");
@@ -65,10 +73,31 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
-fetch("https://httpbin.org/get")
+var url = "https://httpbin.org/get";
+var networkDataReceived = false;
+
+fetch(url)
   .then(function (res) {
     return res.json();
   })
   .then(function (data) {
+    console.log("from web", data);
+    networkDataReceived = true;
+    clearCards();
     createCard();
   });
+
+if ("caches" in window) {
+  caches.match(url).then(function (response) {
+    if (response) {
+      return response.json();
+    }
+  }).then(function(data) {
+    console.log("from Cache", data);
+    console.log("networkDataReceived", networkDataReceived);
+    if (!networkDataReceived) {
+      clearCards();
+      createCard();
+    }
+  });
+}
