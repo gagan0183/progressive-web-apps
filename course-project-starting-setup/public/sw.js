@@ -1,4 +1,4 @@
-var CACHE_STATIC = 'static-v1';
+var CACHE_STATIC = 'static-v2';
 
 self.addEventListener("install", (event) => {
   console.log("[Service worker] installing service worker...", event);
@@ -36,32 +36,60 @@ self.addEventListener("activate", (event) => {
   return self.clients.claim();
 });
 
+// cache the network & dynamic caching strategy
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches
-      .match(event.request)
-      .then(function (response) {
-        if (response) {
-          return response;
-        } else {
-          return fetch(event.request)
-            .then(function (res) {
-              return caches.open("dynamic").then(function (cache) {
-                cache.put(event.request.url, res.clone());
-                return res;
-              });
-            })
-            .catch(function (err) {
-              console.log("error", err);
-              return caches.open(CACHE_STATIC).then(function (cache) {
-                return cache.match("/offline.html");
-              });
-            });
-        }
+    caches.open("dynamic").then(function(cache) {
+      return fetch(event.request).then(function(res) {
+        cache.put(event.request, res.clone());
+        return res;
       })
-      .catch()
+    })
   );
 });
+
+// cache the network strategy
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(
+//     caches
+//       .match(event.request)
+//       .then(function (response) {
+//         if (response) {
+//           return response;
+//         } else {
+//           return fetch(event.request)
+//             .then(function (res) {
+//               return caches.open("dynamic").then(function (cache) {
+//                 cache.put(event.request.url, res.clone());
+//                 return res;
+//               });
+//             })
+//             .catch(function (err) {
+//               console.log("error", err);
+//               return caches.open(CACHE_STATIC).then(function (cache) {
+//                 return cache.match("/offline.html");
+//               });
+//             });
+//         }
+//       })
+//       .catch()
+//   );
+// });
+
+// first network strategy
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(
+//     fetch(event.request)
+//       .then(function(res) {
+//         return caches.open("dynamic").then(function(cache) {
+//           cache.put(event.request.url, res.clone());
+//           return res;
+//         })
+//       }).catch(function(err) {
+//         return caches.match(event.request);
+//       })
+//   );
+// });
 
 // network with caches strategy
 // self.addEventListener("fetch", (event) => {
