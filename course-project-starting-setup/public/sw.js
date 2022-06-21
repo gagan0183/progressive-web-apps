@@ -1,24 +1,25 @@
 var CACHE_STATIC = "static-v2";
+var STATIC_ASSETS = [
+  "/",
+  "/index.html",
+  "/offline.html",
+  "/src/js/app.js",
+  "/src/js/material.min.js",
+  "/src/js/feed.js",
+  "/src/css/app.css",
+  "/src/css/feed.css",
+  "/src/images/main-image.jpg",
+  "https://fonts.googleapis.com/css?family=Roboto:400,700",
+  "https://fonts.googleapis.com/icon?family=Material+Icons",
+  "https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css",
+];
 
 self.addEventListener("install", (event) => {
   console.log("[Service worker] installing service worker...", event);
   event.waitUntil(
     caches.open(CACHE_STATIC).then(function (cache) {
       console.log("[Service worker] Precaching app shell");
-      cache.addAll([
-        "/",
-        "/index.html",
-        "/offline.html",
-        "/src/js/app.js",
-        "/src/js/material.min.js",
-        "/src/js/feed.js",
-        "/src/css/app.css",
-        "/src/css/feed.css",
-        "/src/images/main-image.jpg",
-        "https://fonts.googleapis.com/css?family=Roboto:400,700",
-        "https://fonts.googleapis.com/icon?family=Material+Icons",
-        "https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css",
-      ]);
+      cache.addAll(STATIC_ASSETS);
     })
   );
 });
@@ -51,6 +52,10 @@ self.addEventListener("fetch", (event) => {
           return res;
         });
       })
+    );
+  } else if (new RegExp("\\b" + STATIC_ASSETS.join("\\b|\\b") + "\\b").test(event.request.url)) {
+    event.respondWith(
+      caches.match(event.request)
     );
   } else {
     event.respondWith(
