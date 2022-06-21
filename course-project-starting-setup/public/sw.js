@@ -1,4 +1,4 @@
-var CACHE_STATIC = 'static-v2';
+var CACHE_STATIC = "static-v2";
 
 self.addEventListener("install", (event) => {
   console.log("[Service worker] installing service worker...", event);
@@ -25,27 +25,58 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   console.log("[Service worker] activating service worker...", event);
-  event.waitUntil(caches.keys().then(function(keyList) {
-      return Promise.all(keyList.map(function(key) {
-        if (key !== CACHE_STATIC && key !== "dynamic") {
-          console.log("[Service Worker] removing old caches", key);
-          return caches.delete(key);
-        }
-      }));
-  }))
+  event.waitUntil(
+    caches.keys().then(function (keyList) {
+      return Promise.all(
+        keyList.map(function (key) {
+          if (key !== CACHE_STATIC && key !== "dynamic") {
+            console.log("[Service Worker] removing old caches", key);
+            return caches.delete(key);
+          }
+        })
+      );
+    })
+  );
   return self.clients.claim();
 });
 
 // cache the network & dynamic caching strategy
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.open("dynamic").then(function(cache) {
-      return fetch(event.request).then(function(res) {
-        cache.put(event.request, res.clone());
-        return res;
+  var url = "https://httpbin.org/get";
+  if (event.request.url.indexOf(url) > -1) {
+    event.respondWith(
+      caches.open("dynamic").then(function (cache) {
+        return fetch(event.request).then(function (res) {
+          cache.put(event.request, res.clone());
+          return res;
+        });
       })
-    })
-  );
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then(function (response) {
+        if (response) {
+          return response;
+        } else {
+          return fetch(event.request)
+            .then(function (res) {
+              return caches.open("dynamic").then(function (cache) {
+                cache.put(event.request.url, res.clone());
+                return res;
+              });
+            })
+            .catch(function (err) {
+              console.log("error", err);
+              return caches.open(CACHE_STATIC).then(function (cache) {
+                if (event.request.url.indexOf("/help")) {
+                  return cache.match("/offline.html");
+                }
+              });
+            });
+        }
+      })
+    );
+  }
 });
 
 // cache the network strategy
@@ -111,4 +142,3 @@ self.addEventListener("fetch", (event) => {
 // self.addEventListener("fetch", (event) => {
 //   event.respondWith(fetch(event.request));
 // });
-
