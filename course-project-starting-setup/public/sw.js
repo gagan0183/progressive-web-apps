@@ -41,6 +41,18 @@ self.addEventListener("activate", (event) => {
   return self.clients.claim();
 });
 
+function isInArray(string, array) {
+  var cachePath;
+  if (string.indexOf(self.origin) === 0) {
+    // request targets domain where we serve the page from (i.e. NOT a CDN)
+    console.log("matched ", string);
+    cachePath = string.substring(self.origin.length); // take the part of the URL AFTER the domain (e.g. after localhost:8080)
+  } else {
+    cachePath = string; // store the full request (for CDNs)
+  }
+  return array.indexOf(cachePath) > -1;
+}
+
 // cache the network & dynamic caching strategy
 self.addEventListener("fetch", (event) => {
   var url = "https://httpbin.org/get";
@@ -53,10 +65,8 @@ self.addEventListener("fetch", (event) => {
         });
       })
     );
-  } else if (new RegExp("\\b" + STATIC_ASSETS.join("\\b|\\b") + "\\b").test(event.request.url)) {
-    event.respondWith(
-      caches.match(event.request)
-    );
+  } else if (isInArray(event.request.url, STATIC_ASSETS)) {
+    event.respondWith(caches.match(event.request));
   } else {
     event.respondWith(
       caches.match(event.request).then(function (response) {
@@ -73,7 +83,7 @@ self.addEventListener("fetch", (event) => {
             .catch(function (err) {
               console.log("error", err);
               return caches.open(CACHE_STATIC).then(function (cache) {
-                if (event.request.url.indexOf("/help")) {
+                if (event.request.headers.get("accept").includes("text/html")) {
                   return cache.match("/offline.html");
                 }
               });
