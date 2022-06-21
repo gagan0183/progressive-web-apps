@@ -63,14 +63,24 @@ self.addEventListener("activate", (event) => {
 //   );
 // });
 
+// network with caches strategy
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    fetch(event.request).catch(function (err) {
+      return caches.match(event.request);
+    })
+  );
+});
+
+// cache only strategy
 // self.addEventListener("fetch", (event) => {
 //   event.respondWith(
 //     caches.match(event.request)
 //   );
 // });
 
-
-self.addEventListener("fetch", (event) => {
-  event.respondWith(fetch(event.request));
-});
+// network only strategy
+// self.addEventListener("fetch", (event) => {
+//   event.respondWith(fetch(event.request));
+// });
 
