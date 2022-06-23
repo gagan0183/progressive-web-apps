@@ -11,16 +11,26 @@ function openCreatePostModal() {
     deferredEvent.prompt();
   }
 
-  deferredEvent.userChoice.then((choiceResult) => {
-    console.log(choiceResult.outcome);
-    if (choiceResult.outcome === "dismissed") {
-      console.log("User cancelled installation");
-    } else {
-      console.log("User added to homescreen");
-    }
-  });
+  if (deferredEvent) {
+    deferredEvent.userChoice.then((choiceResult) => {
+      console.log(choiceResult.outcome);
+      if (choiceResult.outcome === "dismissed") {
+        console.log("User cancelled installation");
+      } else {
+        console.log("User added to homescreen");
+      }
+    });
+  }
 
   deferredEvent = null;
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for(var i = 0; i < registrations.length; i++) {
+        registrations[i].unregister();
+      }
+    });
+  }
 }
 
 function closeCreatePostModal() {
@@ -78,10 +88,6 @@ var networkDataReceived = false;
 
 fetch(url, {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
   body: JSON.stringify({
     message: "samples"
   })
