@@ -15,7 +15,7 @@ var STATIC_ASSETS = [
 ];
 
 function trimCache(cacheName, maxItems) {
-  cacheName
+  caches
     .open(cacheName)
     .then(function (cache) {
       return cache.keys().then(function (keys) {
@@ -67,7 +67,7 @@ function isInArray(string, array) {
 
 // cache the network & dynamic caching strategy
 self.addEventListener("fetch", (event) => {
-  var url = "https://httpbin.org/get";
+  var url = "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json";
   if (event.request.url.indexOf(url) > -1) {
     event.respondWith(
       caches.open("dynamic").then(function (cache) {
@@ -89,7 +89,7 @@ self.addEventListener("fetch", (event) => {
           return fetch(event.request)
             .then(function (res) {
               return caches.open("dynamic").then(function (cache) {
-                trimCache("dynamic", 3);
+                // trimCache("dynamic", 3);
                 cache.put(event.request.url, res.clone());
                 return res;
               });
