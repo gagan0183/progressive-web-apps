@@ -77,7 +77,7 @@ self.addEventListener("fetch", (event) => {
         var clonedRes = res.clone();
         clonedRes.json().then(function(data) {
           for (var key in data) {
-            dbPromise.writeData('posts', data[key]);
+            writeData('posts', data[key]);
           }
         });
         return res;
