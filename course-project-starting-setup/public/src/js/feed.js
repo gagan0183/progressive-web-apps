@@ -104,7 +104,6 @@ fetch(url)
     for(var key in data) {
       dataArray.push(data[key]);
     }
-    console.log(dataArray);
     updateUI(dataArray);
   });
 

@@ -1,3 +1,5 @@
+importScripts("/src/js/idb.js");
+
 var CACHE_STATIC = "static-v2";
 var STATIC_ASSETS = [
   "/",
@@ -6,6 +8,7 @@ var STATIC_ASSETS = [
   "/src/js/app.js",
   "/src/js/material.min.js",
   "/src/js/feed.js",
+  "/src/js/idb.js",
   "/src/css/app.css",
   "/src/css/feed.css",
   "/src/images/main-image.jpg",
@@ -13,6 +16,14 @@ var STATIC_ASSETS = [
   "https://fonts.googleapis.com/icon?family=Material+Icons",
   "https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css",
 ];
+
+var dbPromise = idb.open('posts-store', 1, function(db) {
+  if (!db.objectStoreNames.contains('posts')) {
+    db.createObjectStore("posts", {
+      keyPath: "id",
+    });
+  }
+});
 
 function trimCache(cacheName, maxItems) {
   caches
@@ -69,13 +80,19 @@ function isInArray(string, array) {
 self.addEventListener("fetch", (event) => {
   var url = "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json";
   if (event.request.url.indexOf(url) > -1) {
-    event.respondWith(
-      caches.open("dynamic").then(function (cache) {
-        return fetch(event.request).then(function (res) {
-          trimCache("dynamic", 3);
-          cache.put(event.request, res.clone());
-          return res;
+    event.respondWith(fetch(event.request).then(function (res) {
+        var clonedRes = res.clone();
+        clonedRes.json().then(function(data) {
+          for (var key in data) {
+            dbPromise.then(function(db) {
+              var tx = db.transaction('posts', 'readwrite');
+              var store = tx.objectStore('posts');
+              store.put(data[key]);
+              return tx.complete;
+            });
+          }
         });
+        return res;
       })
     );
   } else if (isInArray(event.request.url, STATIC_ASSETS)) {
