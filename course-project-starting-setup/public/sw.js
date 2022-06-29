@@ -80,7 +80,9 @@ self.addEventListener("fetch", (event) => {
           })
           .then(function (data) {
             for (var key in data) {
-              writeData("posts", data[key]);
+              writeData("posts", data[key]).then(function() {
+                clearItemById("posts", key);
+              });
             }
           });
         return res;
