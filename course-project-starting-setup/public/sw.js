@@ -19,15 +19,13 @@ var STATIC_ASSETS = [
 ];
 
 function trimCache(cacheName, maxItems) {
-  caches
-    .open(cacheName)
-    .then(function (cache) {
-      return cache.keys().then(function (keys) {
-        if (keys.length > maxItems) {
-          cache.delete(keys[0]).then(trimCache(cacheName, maxItems));
-        }
-      });
+  caches.open(cacheName).then(function (cache) {
+    return cache.keys().then(function (keys) {
+      if (keys.length > maxItems) {
+        cache.delete(keys[0]).then(trimCache(cacheName, maxItems));
+      }
     });
+  });
 }
 
 self.addEventListener("install", (event) => {
@@ -73,13 +71,18 @@ function isInArray(string, array) {
 self.addEventListener("fetch", (event) => {
   var url = "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json";
   if (event.request.url.indexOf(url) > -1) {
-    event.respondWith(fetch(event.request).then(function (res) {
+    event.respondWith(
+      fetch(event.request).then(function (res) {
         var clonedRes = res.clone();
-        clonedRes.json().then(function(data) {
-          for (var key in data) {
-            writeData('posts', data[key]);
-          }
-        });
+        clearData("posts")
+          .then(function () {
+            return clonedRes.json();
+          })
+          .then(function (data) {
+            for (var key in data) {
+              writeData("posts", data[key]);
+            }
+          });
         return res;
       })
     );
