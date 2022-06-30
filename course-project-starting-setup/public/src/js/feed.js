@@ -6,23 +6,23 @@ var closeCreatePostModalButton = document.querySelector(
 var sharedMomentsArea = document.querySelector("#shared-moments");
 
 function openCreatePostModal() {
-  createPostArea.style.display = "block";
-  if (deferredEvent) {
-    deferredEvent.prompt();
-  }
+  createPostArea.style.transform = "translateY(0)";
+  // if (deferredEvent) {
+  //   deferredEvent.prompt();
+  // }
 
-  if (deferredEvent) {
-    deferredEvent.userChoice.then((choiceResult) => {
-      console.log(choiceResult.outcome);
-      if (choiceResult.outcome === "dismissed") {
-        console.log("User cancelled installation");
-      } else {
-        console.log("User added to homescreen");
-      }
-    });
-  }
+  // if (deferredEvent) {
+  //   deferredEvent.userChoice.then((choiceResult) => {
+  //     console.log(choiceResult.outcome);
+  //     if (choiceResult.outcome === "dismissed") {
+  //       console.log("User cancelled installation");
+  //     } else {
+  //       console.log("User added to homescreen");
+  //     }
+  //   });
+  // }
 
-  deferredEvent = null;
+  // deferredEvent = null;
 
   // if ('serviceWorker' in navigator) {
   //   navigator.serviceWorker.getRegistrations().then(function(registrations) {
@@ -34,7 +34,7 @@ function openCreatePostModal() {
 }
 
 function closeCreatePostModal() {
-  createPostArea.style.display = "none";
+  createPostArea.style.transform = "translateY(100vh)";
 }
 
 function onButtonClicked(event) {
