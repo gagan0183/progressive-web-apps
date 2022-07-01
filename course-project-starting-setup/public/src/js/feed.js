@@ -55,7 +55,7 @@ shareImageButton.addEventListener("click", openCreatePostModal);
 closeCreatePostModalButton.addEventListener("click", closeCreatePostModal);
 
 function clearCards() {
-  while(sharedMomentsArea.hasChildNodes()) {
+  while (sharedMomentsArea.hasChildNodes()) {
     sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
   }
 }
@@ -103,7 +103,7 @@ fetch(url)
     console.log("from web", data);
     networkDataReceived = true;
     var dataArray = [];
-    for(var key in data) {
+    for (var key in data) {
       dataArray.push(data[key]);
     }
     updateUI(dataArray);
@@ -118,7 +118,7 @@ if ("indexedDB" in window) {
   });
 }
 
-form.addEventListener("submit", function(event) {
+form.addEventListener("submit", function (event) {
   event.preventDefault();
   if (titleInput.value.trim() === "" || locationInput.value.trim() === "") {
     alert("Please enter valid input");
@@ -127,8 +127,21 @@ form.addEventListener("submit", function(event) {
   closeCreatePostModal();
 
   if ("serviceWorker" in navigator && "SyncManager" in window) {
-    navigator.serviceWorker.ready.then(function(sw) {
-      sw.sync.register("sync-new-post");
+    navigator.serviceWorker.ready.then(function (sw) {
+      var post = {
+        id: new Date().toISOString(),
+        title: titleInput.value,
+        location: locationInput.value,
+      };
+      writeData("sync-posts", post).then(function() {
+        return sw.sync.register("sync-new-post");
+      }).then(function() {
+        var messageInput = document.querySelector("#confirmation-toast");
+        var data = { message: "Your post was saved for syncing"};
+        messageInput.MaterialSnackbar.showSnackbar(data);
+      }).catch(function(error) {
+        console.log(error);
+      });
     });
   }
 });
