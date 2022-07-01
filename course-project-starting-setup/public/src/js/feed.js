@@ -118,6 +118,26 @@ if ("indexedDB" in window) {
   });
 }
 
+function sendData() {
+  fetch("https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify({
+      id: new Date().toISOString(),
+      title: titleInput.value,
+      location: locationInput.value,
+      image:
+        "https://firebasestorage.googleapis.com/v0/b/learnpwa-ee647.appspot.com/o/sf-boat.jpg?alt=media&token=237cde28-7dd2-4168-b0b1-5e7c348b59e7",
+    }),
+  }).then(function(res) {
+    console.log("Sending data", res);
+    updateUI();
+  });
+}
+
 form.addEventListener("submit", function (event) {
   event.preventDefault();
   if (titleInput.value.trim() === "" || locationInput.value.trim() === "") {
@@ -143,5 +163,7 @@ form.addEventListener("submit", function (event) {
         console.log(error);
       });
     });
+  } else {
+
   }
 });
