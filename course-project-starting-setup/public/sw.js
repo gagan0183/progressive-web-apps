@@ -179,3 +179,42 @@ self.addEventListener("fetch", (event) => {
 // self.addEventListener("fetch", (event) => {
 //   event.respondWith(fetch(event.request));
 // });
+
+self.addEventListener("sync", function (event) {
+  console.log("[Service Worker] Background syncing", event);
+  if (event.tag === "sync-new-posts") {
+    console.log("[Service Worker] Syncing new posts");
+    event.waitUntil(
+      readData("sync-posts").then(function (data) {
+        for (var dt of data) {
+          fetch(
+            "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                id: dt.id,
+                title: dt.title,
+                location: dt.location,
+                image:
+                  "https://firebasestorage.googleapis.com/v0/b/learnpwa-ee647.appspot.com/o/sf-boat.jpg?alt=media&token=237cde28-7dd2-4168-b0b1-5e7c348b59e7",
+              }),
+            }
+          )
+            .then(function (res) {
+              console.log("Sent data", res);
+              if (res.ok) {
+                clearItemById("sync-posts", dt.id);
+              }
+            })
+            .catch(function (err) {
+              console.log("Error while sending data", err);
+            });
+        }
+      })
+    );
+  }
+});

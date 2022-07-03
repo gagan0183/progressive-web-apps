@@ -154,7 +154,7 @@ form.addEventListener("submit", function (event) {
         location: locationInput.value,
       };
       writeData("sync-posts", post).then(function() {
-        return sw.sync.register("sync-new-post");
+        return sw.sync.register("sync-new-posts");
       }).then(function() {
         var messageInput = document.querySelector("#confirmation-toast");
         var data = { message: "Your post was saved for syncing"};
@@ -164,6 +164,6 @@ form.addEventListener("submit", function (event) {
       });
     });
   } else {
-
+    sendData();
   }
 });
