@@ -92,7 +92,7 @@ function updateUI(data) {
   }
 }
 
-var url = "https://us-central1-learnpwa-ee647.cloudfunctions.net/storePostData";
+var url = "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json";
 var networkDataReceived = false;
 
 fetch(url)
@@ -123,7 +123,7 @@ function sendData() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json"
+      Accept: "application/json",
     },
     body: JSON.stringify({
       id: new Date().toISOString(),
@@ -132,7 +132,7 @@ function sendData() {
       image:
         "https://firebasestorage.googleapis.com/v0/b/learnpwa-ee647.appspot.com/o/sf-boat.jpg?alt=media&token=237cde28-7dd2-4168-b0b1-5e7c348b59e7",
     }),
-  }).then(function(res) {
+  }).then(function (res) {
     console.log("Sending data", res);
     updateUI();
   });

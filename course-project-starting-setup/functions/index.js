@@ -24,12 +24,12 @@ exports.storePostData = functions.https.onRequest((request, response) => {
           image: request.body.image,
         })
         .then(() => {
-          response.status(201).json({
+          return response.status(201).json({
             message: "Post saved successfully",
             id: request.body.id,
           });
         }).catch((err) => {
-          response.status(500).json({
+          return response.status(500).json({
             error: err,
           });
         });
