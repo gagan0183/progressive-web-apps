@@ -92,7 +92,7 @@ function updateUI(data) {
   }
 }
 
-var url = "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json";
+var url = "https://us-central1-learnpwa-ee647.cloudfunctions.net/storePostData";
 var networkDataReceived = false;
 
 fetch(url)
@@ -119,7 +119,7 @@ if ("indexedDB" in window) {
 }
 
 function sendData() {
-  fetch("https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json", {
+  fetch("https://us-central1-learnpwa-ee647.cloudfunctions.net/storePostData", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

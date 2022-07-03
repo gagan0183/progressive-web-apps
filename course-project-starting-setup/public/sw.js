@@ -188,7 +188,7 @@ self.addEventListener("sync", function (event) {
       readData("sync-posts").then(function (data) {
         for (var dt of data) {
           fetch(
-            "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json",
+            "https://us-central1-learnpwa-ee647.cloudfunctions.net/storePostData",
             {
               method: "POST",
               headers: {
@@ -207,7 +207,9 @@ self.addEventListener("sync", function (event) {
             .then(function (res) {
               console.log("Sent data", res);
               if (res.ok) {
-                clearItemById("sync-posts", dt.id);
+                res.json().then(function (response) {
+                  clearItemById("sync-posts", response.id);
+                });
               }
             })
             .catch(function (err) {
