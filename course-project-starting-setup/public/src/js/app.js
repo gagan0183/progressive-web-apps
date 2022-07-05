@@ -1,4 +1,5 @@
 var deferredEvent;
+var enableNotificationsButtons = document.querySelectorAll(".enable-notifications");
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/sw.js", { source: "." }).then(() => {
@@ -12,3 +13,22 @@ window.addEventListener("beforeinstallprompt", (event) => {
     deferredEvent = event;
     return false;
 });
+
+function askForNotificationPermissions() {
+  Notification.requestPermission(function(result) {
+    console.log("User choice", result);
+    if (result !== "granted") {
+      console.log("No notification permission granted");
+    } else {
+      
+    }
+  })
+}
+
+if ("Notification" in window) {
+  enableNotificationsButtons.forEach(enableNotificationsButton => {
+    enableNotificationsButton.style.display = "inline-block";
+    enableNotificationsButton.addEventListener("click", askForNotificationPermissions);
+  });
+}
+
