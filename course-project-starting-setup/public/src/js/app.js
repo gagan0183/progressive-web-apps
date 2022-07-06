@@ -61,13 +61,31 @@ function configurePushSub() {
   })
   .then(function(sub) {
     if (sub === null) {
-      swInstances.pushManager.subscribe({
+      var vapidPublic =
+        "BDPJXuY7d2es_yo2fsZ9ur2okszOFMqHTdUQEj8Ycf5NMYWlDm-OYO8jnQJWwsJFHOpywsCfBl4UpaGAuZQ8PCI";
+      var convertVapidPublic = urlBase64ToUint8Array(vapidPublic);
+      return swInstances.pushManager.subscribe({
         userVisibleOnly: true,
-        
+        applicationServerKey: convertVapidPublic,
       });
     } else {
 
     }
+  }).then(function(newSubsc) {
+    return fetch("https://learnpwa-ee647-default-rtdb.firebaseio.com/subscriptions.json", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(newSubsc)
+    });
+  }).then(function(res) {
+    if (res.ok) {
+      displayConfirmNotification();
+    }
+  }).catch(function(err) {
+    console.log(err);
   });
 }
 
