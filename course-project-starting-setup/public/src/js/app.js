@@ -49,18 +49,40 @@ function displayConfirmNotification() {
   // new Notification("Successfully subscribed!", options);
 }
 
+function configurePushSub() {
+  if(!('serviceWorker' in navigator)) {
+    return;
+  }
+
+  var swInstances;
+  navigator.serviceWorker.ready.then(function(sw) {
+    swInstances = sw;
+    return sw.pushManager.getSubscription();
+  })
+  .then(function(sub) {
+    if (sub === null) {
+      swInstances.pushManager.subscribe({
+        userVisibleOnly: true,
+        
+      });
+    } else {
+
+    }
+  });
+}
+
 function askForNotificationPermissions() {
   Notification.requestPermission(function(result) {
     console.log("User choice", result);
     if (result !== "granted") {
       console.log("No notification permission granted");
     } else {
-      displayConfirmNotification();
+      configurePushSub();
     }
   })
 }
 
-if ("Notification" in window) {
+if ("Notification" in window && 'serviceWorker' in navigator) {
   enableNotificationsButtons.forEach(enableNotificationsButton => {
     enableNotificationsButton.style.display = "inline-block";
     enableNotificationsButton.addEventListener("click", askForNotificationPermissions);
