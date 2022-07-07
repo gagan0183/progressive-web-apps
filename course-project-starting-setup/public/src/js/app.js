@@ -62,7 +62,7 @@ function configurePushSub() {
   .then(function(sub) {
     if (sub === null) {
       var vapidPublic =
-        "BDPJXuY7d2es_yo2fsZ9ur2okszOFMqHTdUQEj8Ycf5NMYWlDm-OYO8jnQJWwsJFHOpywsCfBl4UpaGAuZQ8PCI";
+        "BBQt2JHPeJNVdWnh8UTPKOWGPrIVecsyblPZ1Kc4lgIKXPS4kxYDMEjyji1MwnKs-x_LPlW4d2kKCVQKpPEzs_8";
       var convertVapidPublic = urlBase64ToUint8Array(vapidPublic);
       return swInstances.pushManager.subscribe({
         userVisibleOnly: true,
