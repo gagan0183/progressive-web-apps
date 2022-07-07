@@ -231,6 +231,19 @@ self.addEventListener("notificationclick", function(event) {
     notification.close();
   } else {
     console.log(action);
+    event.waitUntil(
+      clients.matchAll().then(function(cs) {
+        var client = cs.find(function(c) {
+          return c.visibilityState == "visible"
+        });
+        if (client) {
+          client.navigate("http://localhost:8080");
+          client.focus();
+        } else {
+          cs.openWindow("http://localhost:8080");
+        }
+      })
+    );
     notification.close();
   }
 });
