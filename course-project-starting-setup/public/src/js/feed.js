@@ -12,6 +12,7 @@ var canvas = document.querySelector("#canvas");
 var capButton = document.querySelector("#capture-btn");
 var imagePicker = document.querySelector("#image-picker");
 var imagePickerArea = document.querySelector("#pick-image");
+var picture;
 
 function initializeMedia() {
   if (!("mediaDevices" in navigator)) {
@@ -46,6 +47,7 @@ capButton.addEventListener("click", function(event) {
   videoPlayer.srcObject.getVideoTracks().forEach(function(track) {
     track.stop();
   });
+  picture = dataURItoBlob(canvas.toDataURL());
 });
 
 function openCreatePostModal() {
@@ -163,19 +165,15 @@ if ("indexedDB" in window) {
 }
 
 function sendData() {
+  const id = new Date().toISOString();
+  var postData = new FormData();
+  postData.append("id", id);
+  postData.append("title", titleInput.value);
+  postData.append("location", locationInput.value);
+  postData.append("file", picture, id + ".png");
   fetch("https://us-central1-learnpwa-ee647.cloudfunctions.net/storePostData", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({
-      id: new Date().toISOString(),
-      title: titleInput.value,
-      location: locationInput.value,
-      image:
-        "https://firebasestorage.googleapis.com/v0/b/learnpwa-ee647.appspot.com/o/sf-boat.jpg?alt=media&token=237cde28-7dd2-4168-b0b1-5e7c348b59e7",
-    }),
+    body: postData,
   }).then(function (res) {
     console.log("Sending data", res);
     updateUI();
@@ -196,6 +194,7 @@ form.addEventListener("submit", function (event) {
         id: new Date().toISOString(),
         title: titleInput.value,
         location: locationInput.value,
+        picture: picture
       };
       writeData("sync-posts", post).then(function() {
         return sw.sync.register("sync-new-posts");

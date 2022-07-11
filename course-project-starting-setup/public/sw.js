@@ -187,21 +187,17 @@ self.addEventListener("sync", function (event) {
     event.waitUntil(
       readData("sync-posts").then(function (data) {
         for (var dt of data) {
+          var postData = new FormData();
+          postData.append("id", dt.id);
+          postData.append("title", dt.title);
+          postData.append("location", dt.location);
+          postData.append("file", dt.picture, dt.id + ".png");
+          
           fetch(
             "https://us-central1-learnpwa-ee647.cloudfunctions.net/storePostData",
             {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              body: JSON.stringify({
-                id: dt.id,
-                title: dt.title,
-                location: dt.location,
-                image:
-                  "https://firebasestorage.googleapis.com/v0/b/learnpwa-ee647.appspot.com/o/sf-boat.jpg?alt=media&token=237cde28-7dd2-4168-b0b1-5e7c348b59e7",
-              }),
+              body: postData,
             }
           )
             .then(function (res) {
