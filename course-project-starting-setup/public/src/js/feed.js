@@ -37,6 +37,17 @@ function initializeMedia() {
   });
 }
 
+capButton.addEventListener("click", function(event) {
+  canvas.style.display = "block";
+  videoPlayer.style.display = "none";
+  capButton.style.display = "none";
+  var context = canvas.getContext("2d");
+  context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
+  videoPlayer.srcObject.getVideoTracks().forEach(function(track) {
+    track.stop();
+  });
+});
+
 function openCreatePostModal() {
   createPostArea.style.transform = "translateY(0)";
   initializeMedia();
@@ -68,7 +79,7 @@ function openCreatePostModal() {
 
 function closeCreatePostModal() {
   createPostArea.style.transform = "translateY(100vh)";
-  imagePicker.style.display = "none";
+  imagePickerArea.style.display = "none";
   videoPlayer.style.display = "none";
   canvas.style.display = "none";
 }
