@@ -5,7 +5,7 @@ const webpush = require("web-push");
 const fs = require("fs");
 const UUID = require("uuid-v4");
 const os = require("os");
-const Busboy = require("busboy");
+const busBoy = require("busboy");
 const path = require("path");
 
 // Create and Deploy Your First Cloud Functions
@@ -31,14 +31,13 @@ exports.storePostData = functions.https.onRequest((request, response) => {
     // eslint-disable-next-line new-cap
     const uuid = UUID();
 
-    console.log("Busboy", Busboy);
-    const busboy = new Busboy({headers: request.headers});
+    const busboy = busBoy({headers: request.headers});
     // These objects will store the values (file + fields) extracted from busboy
     let upload;
     const fields = {};
 
     // This callback will be invoked for each file uploaded
-    busboy.on("file", (fieldname, file, filename, encoding, mimetype) => {
+    busboy.on("file", (fieldname, file, {filename, encoding, mimetype}) => {
       console.log(
           // eslint-disable-next-line max-len
           `File [${fieldname}] filename: ${filename}, encoding: ${encoding}, mimetype: ${mimetype}`

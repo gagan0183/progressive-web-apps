@@ -50,6 +50,10 @@ capButton.addEventListener("click", function(event) {
   picture = dataURItoBlob(canvas.toDataURL());
 });
 
+imagePicker.addEventListener("change", function(event) {
+  picture = event.target.files[0];
+});
+
 function openCreatePostModal() {
   createPostArea.style.transform = "translateY(0)";
   initializeMedia();
