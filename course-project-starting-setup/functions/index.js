@@ -23,14 +23,15 @@ const gcs = require("@google-cloud/storage")(gcconfig);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://learnpwa-ee647.firebaseio.com/",
+  databaseURL: "https://learnpwa-ee647-default-rtdb.firebaseio.com/",
 });
 
-exports.storePostData = functions.https.onRequest(function(request, response) {
-  cors(request, response, function() {
+exports.storePostData = functions.https.onRequest((request, response) => {
+  cors(request, response, () => {
     // eslint-disable-next-line new-cap
     const uuid = UUID();
 
+    console.log("Busboy", Busboy);
     const busboy = new Busboy({headers: request.headers});
     // These objects will store the values (file + fields) extracted from busboy
     let upload;
@@ -64,7 +65,7 @@ exports.storePostData = functions.https.onRequest(function(request, response) {
 
     // This callback will be invoked after all uploaded files are saved.
     busboy.on("finish", () => {
-      const bucket = gcs.bucket("YOUR_PROJECT_ID.appspot.com");
+      const bucket = gcs.bucket("learnpwa-ee647.appspot.com");
       bucket.upload(
           upload.file,
           {
@@ -95,10 +96,10 @@ exports.storePostData = functions.https.onRequest(function(request, response) {
                   })
                   .then(function() {
                     webpush.setVapidDetails(
-                        "mailto:business@academind.com",
+                        "mailto:g.deepsingh1@gmail.com",
                         // eslint-disable-next-line max-len
-                        "BKapuZ3XLgt9UZhuEkodCrtnfBo9Smo-w1YXCIH8YidjHOFAU6XHpEnXefbuYslZY9vtlEnOAmU7Mc-kWh4gfmE",
-                        "AyVHwGh16Kfxrh5AU69E81nVWIKcUwR6a9f1X4zXT_s"
+                        "BBQt2JHPeJNVdWnh8UTPKOWGPrIVecsyblPZ1Kc4lgIKXPS4kxYDMEjyji1MwnKs-x_LPlW4d2kKCVQKpPEzs_8",
+                        "_3zBbGmMQWlPPo53rCzjVShrKmt8ZHqYzmfE1HyNj8I"
                     );
                     return admin.database().ref("subscriptions").once("value");
                   })

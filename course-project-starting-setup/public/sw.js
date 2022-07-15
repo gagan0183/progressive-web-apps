@@ -8,6 +8,7 @@ var STATIC_ASSETS = [
   "/offline.html",
   "/src/js/app.js",
   "/src/js/material.min.js",
+  "/src/js/utility.js",
   "/src/js/feed.js",
   "/src/js/idb.js",
   "/src/css/app.css",
@@ -192,7 +193,7 @@ self.addEventListener("sync", function (event) {
           postData.append("title", dt.title);
           postData.append("location", dt.location);
           postData.append("file", dt.picture, dt.id + ".png");
-          
+
           fetch(
             "https://us-central1-learnpwa-ee647.cloudfunctions.net/storePostData",
             {
