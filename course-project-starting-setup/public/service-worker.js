@@ -27,10 +27,6 @@ const fileManifest = [
     "revision": "2cab47d9e04d664d93c8d91aec59e812"
   },
   {
-    "url": "help/index.html",
-    "revision": "6b2d9c90c040172bebd3c134ee4299af"
-  },
-  {
     "url": "index.html",
     "revision": "e3c986816c7532d5bb9026766b3fe2df"
   },
@@ -136,7 +132,7 @@ const fileManifest = [
   },
   {
     "url": "src/js/app.js",
-    "revision": "ffd1ff12fe2aa25ff7d5db4132b47033"
+    "revision": "a0c4b05caca9107d5a2751669fa88023"
   },
   {
     "url": "src/js/feed.js",
