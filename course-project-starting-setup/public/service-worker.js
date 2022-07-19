@@ -1,4 +1,6 @@
 importScripts("workbox-sw.prod.v2.1.3.js");
+importScripts("/src/js/idb.js");
+importScripts("/src/js/utility.js");
 
 const workboxSW = new self.WorkboxSW();
 
@@ -24,6 +26,25 @@ workboxSW.router.registerRoute(
   })
 );
 
+workboxSW.router.registerRoute(
+  "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json",
+  function(args) {
+    return fetch(args.event.request).then(function (res) {
+      var clonedRes = res.clone();
+      clearData("posts")
+        .then(function () {
+          return clonedRes.json();
+        })
+        .then(function (data) {
+          for (var key in data) {
+            writeData("posts", data[key]);
+          }
+        });
+      return res;
+    });
+  }
+);
+
 workboxSW.precache([
   {
     "url": "404.html",
@@ -47,7 +68,7 @@ workboxSW.precache([
   },
   {
     "url": "service-worker.js",
-    "revision": "22c24046514bbeef43984810161627d9"
+    "revision": "18ca3cf8e24fadda85d72140de921fc7"
   },
   {
     "url": "src/css/app.css",
@@ -163,7 +184,7 @@ workboxSW.precache([
   },
   {
     "url": "sw-base.js",
-    "revision": "6fcf9e0e6a06709e2868497a0de5866a"
+    "revision": "b081fe3ec8617ab8d1a007ea15d29ba6"
   },
   {
     "url": "sw.js",

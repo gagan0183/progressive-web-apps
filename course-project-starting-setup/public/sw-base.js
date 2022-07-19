@@ -1,4 +1,6 @@
 importScripts("workbox-sw.prod.v2.1.3.js");
+importScripts("/src/js/idb.js");
+importScripts("/src/js/utility.js");
 
 const workboxSW = new self.WorkboxSW();
 
@@ -22,6 +24,25 @@ workboxSW.router.registerRoute(
   workboxSW.strategies.staleWhileRevalidate({
     cacheName: "post-images",
   })
+);
+
+workboxSW.router.registerRoute(
+  "https://learnpwa-ee647-default-rtdb.firebaseio.com/posts.json",
+  function(args) {
+    return fetch(args.event.request).then(function (res) {
+      var clonedRes = res.clone();
+      clearData("posts")
+        .then(function () {
+          return clonedRes.json();
+        })
+        .then(function (data) {
+          for (var key in data) {
+            writeData("posts", data[key]);
+          }
+        });
+      return res;
+    });
+  }
 );
 
 workboxSW.precache([]);
